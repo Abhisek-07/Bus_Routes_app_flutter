@@ -7,6 +7,7 @@ import 'package:bus_routes/models/bus_routes.dart';
 // import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+// api_service to fetch json data and return list of Bus routes
 class ApiService {
   Future<List<BusRoute>> getData() async {
     const url =
@@ -60,7 +61,7 @@ class ApiService {
       },
     ).toList();
 
-    print(busRoutes[1].trips[1].tripStartTime);
+    // print(busRoutes[1].trips[1].tripStartTime);
 
     return busRoutes;
 
