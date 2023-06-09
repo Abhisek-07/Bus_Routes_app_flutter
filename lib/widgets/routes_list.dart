@@ -41,7 +41,6 @@ class _RoutesListState extends State<RoutesList> {
 
     flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      //onSelectNotification: onSelectNotification,
     );
   }
 
@@ -106,75 +105,8 @@ class _RoutesListState extends State<RoutesList> {
     );
   }
 
-  // String getTripEndTime(String tripStartTime, String tripDuration) {
-  //   // Parse the trip start time
-  //   final startTime = timeFormat.parse(tripStartTime);
-
-  //   // Split the trip duration into parts
-
-  //   final durationParts = tripDuration.split(' ');
-
-  //   int hours = 0;
-  //   int minutes = 0;
-
-  //   for (final part in durationParts) {
-  //     if (part.contains('hrs')) {
-  //       final value = int.tryParse(part.split('hrs')[0]);
-  //       if (value != null) {
-  //         hours = value;
-  //       }
-  //     } else {
-  //       final value = int.tryParse(part);
-  //       if (value != null) {
-  //         minutes = value;
-  //       }
-  //     }
-  //   }
-
-  //   DateTime endTime = startTime.add(Duration(hours: hours, minutes: minutes));
-  //   final formattedEndTime = timeFormat.format(endTime);
-
-  //   return formattedEndTime;
-  // }
-
-  // List<BusRoute> sortRoutesByTime(List<BusRoute> routes) {
-  //   final deviceTime = timeFormat.format(DateTime.now());
-
-  //   routes.forEach((route) {
-  //     if (route.trips.isNotEmpty) {
-  //       final upcomingTrips = route.trips
-  //           .where((trip) => timeFormat
-  //               .parse(trip.tripStartTime)
-  //               .isAfter(timeFormat.parse(deviceTime)))
-  //           .toList();
-
-  //       if (upcomingTrips.isNotEmpty) {
-  //         upcomingTrips.sort((a, b) => timeFormat
-  //             .parse(a.tripStartTime)
-  //             .compareTo(timeFormat.parse(b.tripStartTime)));
-
-  //         route.shortestTripStartTime = upcomingTrips[0].tripStartTime;
-  //       }
-  //     }
-  //   });
-
-  //   routes.sort((a, b) {
-  //     if (a.shortestTripStartTime == null || b.shortestTripStartTime == null) {
-  //       return 0;
-  //     }
-
-  //     return timeFormat
-  //         .parse(a.shortestTripStartTime!)
-  //         .compareTo(timeFormat.parse(b.shortestTripStartTime!));
-  //   });
-
-  //   return routes;
-  // }
-
   @override
   Widget build(BuildContext context) {
-    // List<BusRoute> sortedRoutes = sortRoutesByTime(widget.busRoutes);
-
     // count to check if no more trips are remaining in any route, then to return a center widget with no more trips
     int routesWithNoUpcomingTrips = 0;
     return ListView.builder(

@@ -4,7 +4,6 @@ import 'package:bus_routes/models/trip.dart';
 
 import 'package:bus_routes/models/bus_routes.dart';
 
-// import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 // api_service to fetch json data and return list of Bus routes
@@ -19,8 +18,6 @@ class ApiService {
 
     final Map<String, dynamic> busData = json.decode(data);
 
-    // List<Map<String, dynamic>> busRoutesInfo = busData['routeInfo'];
-
     List<dynamic> busRoutesInfo = busData['routeInfo'];
 
     List<BusRoute> busRoutes = busRoutesInfo.map(
@@ -31,9 +28,6 @@ class ApiService {
         String destination = busInfo['destination'];
         String tripDuration = busInfo['tripDuration'];
         String icon = busInfo['icon'];
-
-        // List<Map<String, dynamic>> busRouteTimings =
-        //     busData['routeTimings'][id];
 
         List<dynamic> busRouteTimings = busData['routeTimings'][id];
 
@@ -61,12 +55,6 @@ class ApiService {
       },
     ).toList();
 
-    // print(busRoutes[1].trips[1].tripStartTime);
-
     return busRoutes;
-
-    // print(busData);
-
-    // print(response.body);
   }
 }

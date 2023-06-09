@@ -1,4 +1,3 @@
-//import 'package:bus_routes/screens/routes.dart';
 import 'package:bus_routes/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 

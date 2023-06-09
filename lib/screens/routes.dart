@@ -1,9 +1,3 @@
-// import 'dart:convert';
-
-// import 'package:bus_routes/models/trip.dart';
-
-// import 'package:http/http.dart' as http;
-
 import 'package:bus_routes/models/bus_routes.dart';
 import 'package:bus_routes/widgets/routes_list.dart';
 import 'package:flutter/material.dart';
@@ -12,15 +6,9 @@ import 'package:bus_routes/service/api_service.dart';
 class RoutesScreen extends StatelessWidget {
   RoutesScreen({super.key});
 
-  // List<BusRoute> busRoutes = [];
-
-  // Future<List<BusRoute>> fetchData() async {
-  //   busRoutes = await ApiService().getData();
-  //   return busRoutes;
-  // }
-
   final apiService = ApiService();
 
+  // Here we get the http request data using a future builder and handle its states & pass the data to routes list
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,13 +44,6 @@ class RoutesScreen extends StatelessWidget {
                   })),
         ],
       ),
-      // body: Center(
-      //   child: TextButton(
-      //       onPressed: () {
-      //         getData();
-      //       },
-      //       child: const Text('Get Data')),
-      // ),
     );
   }
 }

@@ -32,7 +32,6 @@ class SplashScreen extends StatelessWidget {
       nextScreen: RoutesScreen(),
       splashIconSize: 150,
       splashTransition: SplashTransition.slideTransition,
-      //animationDuration: const Duration(seconds: 3),
       duration: 2000,
     );
   }
