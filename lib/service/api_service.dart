@@ -45,13 +45,14 @@ class ApiService {
         ).toList();
 
         return BusRoute(
-            id: id,
-            name: name,
-            source: source,
-            destination: destination,
-            tripDuration: tripDuration,
-            icon: icon,
-            trips: trips);
+          id: id,
+          name: name,
+          source: source,
+          destination: destination,
+          tripDuration: tripDuration,
+          icon: icon,
+          trips: trips,
+        );
       },
     ).toList();
 

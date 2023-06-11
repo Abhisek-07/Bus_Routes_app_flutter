@@ -1,12 +1,13 @@
 import 'dart:async';
 
 import 'package:bus_routes/models/bus_routes.dart';
+import 'package:bus_routes/utils/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:bus_routes/service/utils.dart';
+//import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+//import 'package:permission_handler/permission_handler.dart';
+import 'package:bus_routes/utils/utils.dart';
 
 final timeFormat = DateFormat('HH:mm');
 
@@ -22,31 +23,34 @@ class RoutesList extends StatefulWidget {
 class _RoutesListState extends State<RoutesList> {
   Timer? timer;
   List<BusRoute> sortedRoutes = [];
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  NotificationService notificationService = NotificationService();
+  // FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  //     FlutterLocalNotificationsPlugin();
 
+  // timer and notification settings are initialised inside initstate
   @override
   void initState() {
     super.initState();
     updateData();
     startTimer();
 
-    const initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-    const initializationSettingsIOS = DarwinInitializationSettings();
-    const initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-    );
+    // const initializationSettingsAndroid =
+    //     AndroidInitializationSettings('@mipmap/ic_launcher');
+    // const initializationSettingsIOS = DarwinInitializationSettings();
+    // const initializationSettings = InitializationSettings(
+    //   android: initializationSettingsAndroid,
+    //   iOS: initializationSettingsIOS,
+    // );
 
-    flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
-    );
+    // flutterLocalNotificationsPlugin.initialize(
+    //   initializationSettings,
+    // );
   }
 
   @override
   void dispose() {
     timer?.cancel();
+    notificationService.dispose();
     super.dispose();
   }
 
@@ -64,46 +68,46 @@ class _RoutesListState extends State<RoutesList> {
     });
   }
 
-  // For handling notification permissions
-  Future<bool> requestNotificationPermission() async {
-    PermissionStatus status = await Permission.notification.status;
-    if (!status.isGranted) {
-      status = await Permission.notification.request();
-    }
-    return status.isGranted;
-  }
+  // // For handling notification permissions
+  // Future<bool> requestNotificationPermission() async {
+  //   PermissionStatus status = await Permission.notification.status;
+  //   if (!status.isGranted) {
+  //     status = await Permission.notification.request();
+  //   }
+  //   return status.isGranted;
+  // }
 
-  // For showing notification
-  Future<void> showNotification() async {
-    final permissionGranted = await requestNotificationPermission();
+  // // For showing notification
+  // Future<void> showNotification() async {
+  //   final permissionGranted = await requestNotificationPermission();
 
-    if (!permissionGranted) {
-      return;
-    }
+  //   if (!permissionGranted) {
+  //     return;
+  //   }
 
-    const androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      'channel_id',
-      'channel_name',
-      channelDescription: 'channel_description',
-      importance: Importance.max,
-      priority: Priority.high,
-      ticker: 'ticker',
-    );
+  //   const androidPlatformChannelSpecifics = AndroidNotificationDetails(
+  //     'channel_id',
+  //     'channel_name',
+  //     channelDescription: 'channel_description',
+  //     importance: Importance.max,
+  //     priority: Priority.high,
+  //     ticker: 'ticker',
+  //   );
 
-    const iOSPlatformChannelSpecifics = DarwinNotificationDetails();
+  //   const iOSPlatformChannelSpecifics = DarwinNotificationDetails();
 
-    const platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
-      iOS: iOSPlatformChannelSpecifics,
-    );
+  //   const platformChannelSpecifics = NotificationDetails(
+  //     android: androidPlatformChannelSpecifics,
+  //     iOS: iOSPlatformChannelSpecifics,
+  //   );
 
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      'Bus Reminder',
-      'Your bus will arrive in 5 minutes!',
-      platformChannelSpecifics,
-    );
-  }
+  //   await flutterLocalNotificationsPlugin.show(
+  //     0,
+  //     'Bus Reminder',
+  //     'Your bus will arrive in 5 minutes!',
+  //     platformChannelSpecifics,
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -139,8 +143,8 @@ class _RoutesListState extends State<RoutesList> {
             return Container();
           }
 
-          if (remainingTime.inMinutes == 5) {
-            showNotification();
+          if (remainingTime.inMinutes == 80) {
+            notificationService.showNotification();
           }
 
           return Center(
@@ -149,7 +153,8 @@ class _RoutesListState extends State<RoutesList> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16)),
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(8, 12, 8, 12),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
                 child: SizedBox(
                   width: 350,
                   height: 200,
@@ -171,7 +176,10 @@ class _RoutesListState extends State<RoutesList> {
                                     ),
                                     child: Icon(Icons.location_on),
                                   ),
-                                  title: Text(route.source),
+                                  title: Text(
+                                    route.source,
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
                                   subtitle: Text(route.shortestTripStartTime!),
                                 ),
                                 const SizedBox(
@@ -185,7 +193,10 @@ class _RoutesListState extends State<RoutesList> {
                                     ),
                                     child: Icon(Icons.location_on),
                                   ),
-                                  title: Text(route.destination),
+                                  title: Text(
+                                    route.destination,
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
                                   subtitle: Text(tripEndTime),
                                 )
                               ],
@@ -195,15 +206,18 @@ class _RoutesListState extends State<RoutesList> {
                           //     child: Divider(
                           //   height: 50,
                           // )),
+                          const VerticalDivider(),
                           Expanded(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 const Text(
                                   'Departure in:',
                                   style: TextStyle(
-                                      fontSize: 20, color: Colors.black54),
+                                    fontSize: 20,
+                                  ),
                                 ),
                                 const SizedBox(
                                   height: 8,
@@ -213,11 +227,13 @@ class _RoutesListState extends State<RoutesList> {
                                     children: [
                                       TextSpan(
                                         text: '${remainingTime.inMinutes}',
-                                        style: const TextStyle(fontSize: 20),
+                                        style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                       const TextSpan(
                                         text: 'mins',
-                                        style: TextStyle(fontSize: 10),
+                                        style: TextStyle(fontSize: 12),
                                       )
                                     ],
                                   ),
@@ -241,7 +257,10 @@ class _RoutesListState extends State<RoutesList> {
                             const SizedBox(
                               width: 20,
                             ),
-                            const Icon(Icons.bus_alert),
+                            const Icon(
+                              Icons.bus_alert,
+                              color: Colors.lightBlue,
+                            ),
                           ],
                         ),
                       ),

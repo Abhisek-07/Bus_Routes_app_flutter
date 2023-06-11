@@ -1,3 +1,4 @@
+// model for each trip
 class Trip {
   Trip(
       {required this.tripStartTime,
