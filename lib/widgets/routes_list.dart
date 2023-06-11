@@ -5,8 +5,6 @@ import 'package:bus_routes/utils/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-//import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-//import 'package:permission_handler/permission_handler.dart';
 import 'package:bus_routes/utils/utils.dart';
 
 final timeFormat = DateFormat('HH:mm');
@@ -24,33 +22,18 @@ class _RoutesListState extends State<RoutesList> {
   Timer? timer;
   List<BusRoute> sortedRoutes = [];
   NotificationService notificationService = NotificationService();
-  // FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  //     FlutterLocalNotificationsPlugin();
 
-  // timer and notification settings are initialised inside initstate
+  // timer is initialised inside initstate
   @override
   void initState() {
     super.initState();
     updateData();
     startTimer();
-
-    // const initializationSettingsAndroid =
-    //     AndroidInitializationSettings('@mipmap/ic_launcher');
-    // const initializationSettingsIOS = DarwinInitializationSettings();
-    // const initializationSettings = InitializationSettings(
-    //   android: initializationSettingsAndroid,
-    //   iOS: initializationSettingsIOS,
-    // );
-
-    // flutterLocalNotificationsPlugin.initialize(
-    //   initializationSettings,
-    // );
   }
 
   @override
   void dispose() {
     timer?.cancel();
-    notificationService.dispose();
     super.dispose();
   }
 
@@ -67,47 +50,6 @@ class _RoutesListState extends State<RoutesList> {
       });
     });
   }
-
-  // // For handling notification permissions
-  // Future<bool> requestNotificationPermission() async {
-  //   PermissionStatus status = await Permission.notification.status;
-  //   if (!status.isGranted) {
-  //     status = await Permission.notification.request();
-  //   }
-  //   return status.isGranted;
-  // }
-
-  // // For showing notification
-  // Future<void> showNotification() async {
-  //   final permissionGranted = await requestNotificationPermission();
-
-  //   if (!permissionGranted) {
-  //     return;
-  //   }
-
-  //   const androidPlatformChannelSpecifics = AndroidNotificationDetails(
-  //     'channel_id',
-  //     'channel_name',
-  //     channelDescription: 'channel_description',
-  //     importance: Importance.max,
-  //     priority: Priority.high,
-  //     ticker: 'ticker',
-  //   );
-
-  //   const iOSPlatformChannelSpecifics = DarwinNotificationDetails();
-
-  //   const platformChannelSpecifics = NotificationDetails(
-  //     android: androidPlatformChannelSpecifics,
-  //     iOS: iOSPlatformChannelSpecifics,
-  //   );
-
-  //   await flutterLocalNotificationsPlugin.show(
-  //     0,
-  //     'Bus Reminder',
-  //     'Your bus will arrive in 5 minutes!',
-  //     platformChannelSpecifics,
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +85,7 @@ class _RoutesListState extends State<RoutesList> {
             return Container();
           }
 
-          if (remainingTime.inMinutes == 80) {
+          if (remainingTime.inMinutes == 5) {
             notificationService.showNotification();
           }
 

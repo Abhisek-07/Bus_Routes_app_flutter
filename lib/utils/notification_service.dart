@@ -2,10 +2,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class NotificationService {
-  FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin;
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   NotificationService() {
-    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     const initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     const initializationSettingsIOS = DarwinInitializationSettings();
@@ -14,13 +14,9 @@ class NotificationService {
       iOS: initializationSettingsIOS,
     );
 
-    flutterLocalNotificationsPlugin!.initialize(
+    flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
     );
-  }
-
-  void dispose() {
-    flutterLocalNotificationsPlugin = null;
   }
 
   // For handling notification permissions
@@ -56,7 +52,7 @@ class NotificationService {
       iOS: iOSPlatformChannelSpecifics,
     );
 
-    await flutterLocalNotificationsPlugin!.show(
+    await flutterLocalNotificationsPlugin.show(
       0,
       'Bus Reminder',
       'Your bus will arrive in 5 minutes!',
