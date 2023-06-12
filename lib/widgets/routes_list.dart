@@ -63,11 +63,12 @@ class _RoutesListState extends State<RoutesList> {
           if (route.shortestTripStartTime == null) {
             routesWithNoUpcomingTrips++;
             if (routesWithNoUpcomingTrips == sortedRoutes.length) {
-              return const SizedBox(
-                width: double.infinity,
-                height: double.infinity,
-                child: Center(
-                  child: Text('No more trips'),
+              return const Center(
+                child: Text(
+                  'No more trips left',
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
                 ),
               );
             }
@@ -125,7 +126,7 @@ class _RoutesListState extends State<RoutesList> {
                                   subtitle: Text(route.shortestTripStartTime!),
                                 ),
                                 const SizedBox(
-                                  height: 16,
+                                  height: 12,
                                 ),
                                 ListTile(
                                   minLeadingWidth: 10,
