@@ -89,3 +89,12 @@ List<BusRoute> sortRoutesByTime(List<BusRoute> busRoutes) {
 
   return routes;
 }
+
+// returns remaining time from tripTime from currentTime
+int getRemainingTimeInMinutes(String tripTime) {
+  final currentTime = timeFormat.format(DateTime.now());
+  final remainingTime =
+      timeFormat.parse(tripTime).difference(timeFormat.parse(currentTime));
+
+  return remainingTime.inMinutes;
+}
