@@ -45,7 +45,7 @@ class _RoutesListState extends State<RoutesList> {
       final remainingTime =
           getRemainingTimeInMinutes(sortedRoutes[0].shortestTripStartTime!);
 
-      if (remainingTime == 39) {
+      if (remainingTime == 5) {
         NotificationService.showNotification();
       }
     }
