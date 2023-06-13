@@ -42,11 +42,6 @@ class _RoutesListState extends State<RoutesList> {
 
     // logic for showing notifications when 5 minutes till next bus
     if (sortedRoutes[0].shortestTripStartTime != null) {
-      // final currentTime = timeFormat.format(DateTime.now());
-      // final remainingTime = timeFormat
-      //     .parse(sortedRoutes[0].shortestTripStartTime!)
-      //     .difference(timeFormat.parse(currentTime));
-
       final remainingTime =
           getRemainingTimeInMinutes(sortedRoutes[0].shortestTripStartTime!);
 
@@ -55,14 +50,6 @@ class _RoutesListState extends State<RoutesList> {
       }
     }
   }
-
-  // int getRemainingTimeInMinutes(String tripTime) {
-  //   final currentTime = timeFormat.format(DateTime.now());
-  //   final remainingTime =
-  //       timeFormat.parse(tripTime).difference(timeFormat.parse(currentTime));
-
-  //   return remainingTime.inMinutes;
-  // }
 
   // starts timer for periodic update of bus routes every minute
   void startTimer() {
@@ -100,10 +87,6 @@ class _RoutesListState extends State<RoutesList> {
             return Container();
           }
 
-          // final currentTime = timeFormat.format(DateTime.now());
-          // final remainingTime = timeFormat
-          //     .parse(route.shortestTripStartTime!)
-          //     .difference(timeFormat.parse(currentTime));
           final remainingTime =
               getRemainingTimeInMinutes(route.shortestTripStartTime!);
           final tripEndTime =
