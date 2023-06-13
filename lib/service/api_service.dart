@@ -18,6 +18,7 @@ class ApiService {
 
     final Map<String, dynamic> busData = json.decode(data);
 
+    // list of bus routes
     List<dynamic> busRoutesInfo = busData['routeInfo'];
 
     List<BusRoute> busRoutes = busRoutesInfo.map(
@@ -29,6 +30,7 @@ class ApiService {
         String tripDuration = busInfo['tripDuration'];
         String icon = busInfo['icon'];
 
+        // list of bus route trips for each bus route
         List<dynamic> busRouteTimings = busData['routeTimings'][id];
 
         List<Trip> trips = busRouteTimings.map(

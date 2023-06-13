@@ -21,9 +21,8 @@ class RoutesList extends StatefulWidget {
 class _RoutesListState extends State<RoutesList> {
   Timer? timer;
   List<BusRoute> sortedRoutes = [];
-  // NotificationService notificationService = NotificationService();
 
-  // timer is initialised inside initstate
+  // timer is initialised inside initstate and first call to updateData to sort the routes
   @override
   void initState() {
     super.initState();
@@ -75,6 +74,7 @@ class _RoutesListState extends State<RoutesList> {
           if (route.shortestTripStartTime == null) {
             routesWithNoUpcomingTrips++;
             if (routesWithNoUpcomingTrips == sortedRoutes.length) {
+              // returns this if no trips on any route are left
               return const Center(
                 child: Text(
                   'No more trips left',
@@ -84,6 +84,8 @@ class _RoutesListState extends State<RoutesList> {
                 ),
               );
             }
+
+            // returns this if there are trips but no trips for this route
             return Container();
           }
 
@@ -98,10 +100,7 @@ class _RoutesListState extends State<RoutesList> {
             return Container();
           }
 
-          // if (remainingTime.inMinutes == 5) {
-          //   NotificationService.showNotification();
-          // }
-
+          // widget for route card
           return Center(
             child: Card(
               margin: const EdgeInsets.only(bottom: 30),
@@ -157,10 +156,6 @@ class _RoutesListState extends State<RoutesList> {
                               ],
                             ),
                           ),
-                          // Expanded(
-                          //     child: Divider(
-                          //   height: 50,
-                          // )),
                           const VerticalDivider(),
                           Expanded(
                             child: Column(

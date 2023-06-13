@@ -2,6 +2,7 @@ import 'package:bus_routes/screens/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 
+// splash screen that displays when app starts
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 

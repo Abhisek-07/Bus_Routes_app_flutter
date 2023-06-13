@@ -17,6 +17,7 @@ String getTripEndTime(String tripStartTime, String tripDuration) {
   int minutes = 0;
 
   for (final part in durationParts) {
+    // if string contains 'hrs', it is no of hours, else it contains no of minutes
     if (part.contains('hrs')) {
       final value = int.tryParse(part.split('hrs')[0]);
       if (value != null) {
@@ -36,11 +37,14 @@ String getTripEndTime(String tripStartTime, String tripDuration) {
   return formattedEndTime;
 }
 
-// sorts the trips of each route (only upcoming trips) and then sorts the routes based on the shortest remaining time(first entry of upcoming trips) of each route
+// sorts the trips of each route (only upcoming trips, i.e, trips after current time) and then sorts
+// the routes based on the shortest remaining time(first entry of upcoming trips) of each route
+
 List<BusRoute> sortRoutesByTime(List<BusRoute> busRoutes) {
   List<BusRoute> routes = busRoutes;
   final deviceTime = timeFormat.format(DateTime.now());
 
+  // sorts the trips for each trip (if there are upcoming trips)
   routes.forEach((route) {
     if (route.trips.isNotEmpty) {
       final upcomingTrips = route.trips
@@ -59,16 +63,7 @@ List<BusRoute> sortRoutesByTime(List<BusRoute> busRoutes) {
     }
   });
 
-  // routes.sort((a, b) {
-  //   if (a.shortestTripStartTime == null || b.shortestTripStartTime == null) {
-  //     return 0;
-  //   }
-
-  //   return timeFormat
-  //       .parse(a.shortestTripStartTime!)
-  //       .compareTo(timeFormat.parse(b.shortestTripStartTime!));
-  // });
-
+  // sorts the routes based on the shortestTripStartTime property
   routes.sort((a, b) {
     final shortestStartTimeA = a.shortestTripStartTime != null
         ? timeFormat.parse(a.shortestTripStartTime!)
