@@ -2,25 +2,27 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class NotificationService {
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  NotificationService() {
+  static Future<void> init() async {
     const initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
+
     const initializationSettingsIOS = DarwinInitializationSettings();
+
     const initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
     );
 
-    flutterLocalNotificationsPlugin.initialize(
+    await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
     );
   }
 
   // For handling notification permissions
-  Future<bool> requestNotificationPermission() async {
+  static Future<bool> requestNotificationPermission() async {
     PermissionStatus status = await Permission.notification.status;
     if (!status.isGranted) {
       status = await Permission.notification.request();
@@ -29,7 +31,7 @@ class NotificationService {
   }
 
   // For showing notification
-  Future<void> showNotification() async {
+  static Future<void> showNotification() async {
     final permissionGranted = await requestNotificationPermission();
 
     if (!permissionGranted) {

@@ -21,7 +21,7 @@ class RoutesList extends StatefulWidget {
 class _RoutesListState extends State<RoutesList> {
   Timer? timer;
   List<BusRoute> sortedRoutes = [];
-  NotificationService notificationService = NotificationService();
+  // NotificationService notificationService = NotificationService();
 
   // timer is initialised inside initstate
   @override
@@ -40,6 +40,18 @@ class _RoutesListState extends State<RoutesList> {
   // updates sorted list of bus routes
   void updateData() {
     sortedRoutes = sortRoutesByTime(widget.busRoutes);
+
+    // logic for showing notifications when 5 minutes till next bus
+    if (sortedRoutes[0].shortestTripStartTime != null) {
+      final currentTime = timeFormat.format(DateTime.now());
+      final remainingTime = timeFormat
+          .parse(sortedRoutes[0].shortestTripStartTime!)
+          .difference(timeFormat.parse(currentTime));
+
+      if (remainingTime.inMinutes == 5) {
+        NotificationService.showNotification();
+      }
+    }
   }
 
   // starts timer for periodic update of bus routes every minute
@@ -86,9 +98,9 @@ class _RoutesListState extends State<RoutesList> {
             return Container();
           }
 
-          if (remainingTime.inMinutes == 5) {
-            notificationService.showNotification();
-          }
+          // if (remainingTime.inMinutes == 5) {
+          //   NotificationService.showNotification();
+          // }
 
           return Center(
             child: Card(
