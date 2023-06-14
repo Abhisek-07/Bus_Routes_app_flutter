@@ -30,6 +30,7 @@ class _RoutesListState extends State<RoutesList> {
     startTimer();
   }
 
+  // dispose method
   @override
   void dispose() {
     timer?.cancel();
@@ -38,8 +39,9 @@ class _RoutesListState extends State<RoutesList> {
 
   // updates sorted list of bus routes
   void updateData() {
-    sortedRoutes = sortRoutesByTime(widget.busRoutes);
-
+    setState(() {
+      sortedRoutes = sortRoutesByTime(widget.busRoutes);
+    });
     // logic for showing notifications when 5 minutes till next bus
     if (sortedRoutes[0].shortestTripStartTime != null) {
       final remainingTime =
@@ -54,9 +56,7 @@ class _RoutesListState extends State<RoutesList> {
   // starts timer for periodic update of bus routes every minute
   void startTimer() {
     timer = Timer.periodic(const Duration(minutes: 1), (Timer timer) {
-      setState(() {
-        updateData();
-      });
+      updateData();
     });
   }
 

@@ -1,16 +1,18 @@
 import 'package:bus_routes/models/bus_routes.dart';
+import 'package:bus_routes/service/api_service.dart';
 import 'package:bus_routes/widgets/routes_list.dart';
 import 'package:flutter/material.dart';
-import 'package:bus_routes/service/api_service.dart';
+// import 'package:bus_routes/service/api_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class RoutesScreen extends StatelessWidget {
-  RoutesScreen({super.key});
+class RoutesScreen extends ConsumerWidget {
+  const RoutesScreen({super.key});
 
-  final apiService = ApiService();
+  // final apiService = ApiService();
 
   // Here we get the http request data using a future builder and handle its states & pass the data to routes list
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: Stack(
         children: [
@@ -24,7 +26,7 @@ class RoutesScreen extends StatelessWidget {
           Padding(
               padding: const EdgeInsets.fromLTRB(30, 80, 30, 30),
               child: FutureBuilder(
-                  future: apiService.getData(),
+                  future: ref.watch(routesProvider.future),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
