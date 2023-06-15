@@ -46,6 +46,11 @@ class _RoutesListState extends State<RoutesList> {
   Timer? timer;
   // List<BusRoute> sortedRoutes = [];
 
+  bool isLoading = false;
+
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
+
   // timer is initialised inside initstate and first call to updateData to sort the routes
   @override
   void initState() {
@@ -103,162 +108,192 @@ class _RoutesListState extends State<RoutesList> {
     });
   }
 
+  // function to be executed on pull to refresh
+  Future<void> _refreshList() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    await Future.delayed(const Duration(milliseconds: 1500));
+
+    isLoading = false;
+    updateData();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // count to check if no more trips are remaining in any route, then to return a center widget with no more trips
-    int routesWithNoUpcomingTrips = 0;
-    return ListView.builder(
-        itemCount: sortedRoutes.length,
-        itemBuilder: (context, index) {
-          final route = sortedRoutes[index];
+    if (isLoading) {
+      return Center(
+        child: TweenAnimationBuilder<double>(
+          tween: Tween<double>(begin: 0.0, end: 1),
+          duration: const Duration(milliseconds: 1500),
+          builder: (context, value, _) => CircularProgressIndicator(
+            value: value,
+          ),
+        ),
+      );
+    }
 
-          if (route.shortestTripStartTime == null) {
-            routesWithNoUpcomingTrips++;
-            if (routesWithNoUpcomingTrips == sortedRoutes.length) {
-              // returns this if no trips on any route are left
-              return const Center(
-                child: Text(
-                  'No more trips left',
-                  style: TextStyle(
-                    fontSize: 20,
+    // count to check if no more trips are remaining in any route, then to return a center widget with no more trips
+
+    int routesWithNoUpcomingTrips = 0;
+    return RefreshIndicator(
+      key: _refreshIndicatorKey,
+      onRefresh: _refreshList,
+      child: ListView.builder(
+          itemCount: sortedRoutes.length,
+          itemBuilder: (context, index) {
+            final route = sortedRoutes[index];
+
+            if (route.shortestTripStartTime == null) {
+              routesWithNoUpcomingTrips++;
+              if (routesWithNoUpcomingTrips == sortedRoutes.length) {
+                // returns this if no trips on any route are left
+                return const Center(
+                  child: Text(
+                    'No more trips left',
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
                   ),
-                ),
-              );
+                );
+              }
+
+              // returns this if there are trips but no trips for this route
+              return Container();
             }
 
-            // returns this if there are trips but no trips for this route
-            return Container();
-          }
+            final remainingTime =
+                getRemainingTimeInMinutes(route.shortestTripStartTime!);
+            final tripEndTime = getTripEndTime(
+                route.shortestTripStartTime!, route.tripDuration);
 
-          final remainingTime =
-              getRemainingTimeInMinutes(route.shortestTripStartTime!);
-          final tripEndTime =
-              getTripEndTime(route.shortestTripStartTime!, route.tripDuration);
+            if (remainingTime <= 0) {
+              return Container();
+            }
 
-          if (remainingTime <= 0) {
-            return Container();
-          }
-
-          // widget for route card
-          return Center(
-            child: Card(
-              margin: const EdgeInsets.only(bottom: 30),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16)),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
-                child: SizedBox(
-                  width: 350,
-                  height: 200,
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ListTile(
-                                  minLeadingWidth: 10,
-                                  leading: const IconTheme(
-                                    data: IconThemeData(
-                                      color: Colors.blue,
-                                    ),
-                                    child: Icon(Icons.location_on),
-                                  ),
-                                  title: Text(
-                                    route.source,
-                                    style: const TextStyle(fontSize: 14),
-                                  ),
-                                  subtitle: Text(route.shortestTripStartTime!),
-                                ),
-                                const SizedBox(
-                                  height: 12,
-                                ),
-                                ListTile(
-                                  minLeadingWidth: 10,
-                                  leading: const IconTheme(
-                                    data: IconThemeData(
-                                      color: Colors.red,
-                                    ),
-                                    child: Icon(Icons.location_on),
-                                  ),
-                                  title: Text(
-                                    route.destination,
-                                    style: const TextStyle(fontSize: 14),
-                                  ),
-                                  subtitle: Text(tripEndTime),
-                                )
-                              ],
-                            ),
-                          ),
-                          const VerticalDivider(),
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text(
-                                  'Departure in:',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: '$remainingTime',
-                                        style: const TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const TextSpan(
-                                        text: 'mins',
-                                        style: TextStyle(fontSize: 12),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                Text('Travel time: ${route.tripDuration}'),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      Expanded(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
+            // widget for route card
+            return Center(
+              child: Card(
+                margin: const EdgeInsets.only(bottom: 30),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16)),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+                  child: SizedBox(
+                    width: 350,
+                    height: 200,
+                    child: Column(
+                      children: [
+                        Row(
                           children: [
-                            Text(route.name),
-                            const SizedBox(
-                              width: 20,
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ListTile(
+                                    minLeadingWidth: 10,
+                                    leading: const IconTheme(
+                                      data: IconThemeData(
+                                        color: Colors.blue,
+                                      ),
+                                      child: Icon(Icons.location_on),
+                                    ),
+                                    title: Text(
+                                      route.source,
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                    subtitle:
+                                        Text(route.shortestTripStartTime!),
+                                  ),
+                                  const SizedBox(
+                                    height: 12,
+                                  ),
+                                  ListTile(
+                                    minLeadingWidth: 10,
+                                    leading: const IconTheme(
+                                      data: IconThemeData(
+                                        color: Colors.red,
+                                      ),
+                                      child: Icon(Icons.location_on),
+                                    ),
+                                    title: Text(
+                                      route.destination,
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                    subtitle: Text(tripEndTime),
+                                  )
+                                ],
+                              ),
                             ),
-                            const Icon(
-                              Icons.bus_alert,
-                              color: Colors.lightBlue,
+                            const VerticalDivider(),
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Text(
+                                    'Departure in:',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 8,
+                                  ),
+                                  Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: '$remainingTime',
+                                          style: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        const TextSpan(
+                                          text: 'mins',
+                                          style: TextStyle(fontSize: 12),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 8,
+                                  ),
+                                  Text('Travel time: ${route.tripDuration}'),
+                                ],
+                              ),
                             ),
                           ],
                         ),
-                      ),
-                    ],
+                        Expanded(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(route.name),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              const Icon(
+                                Icons.bus_alert,
+                                color: Colors.lightBlue,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          );
-        });
+            );
+          }),
+    );
   }
 }
