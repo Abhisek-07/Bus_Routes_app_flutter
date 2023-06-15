@@ -5,6 +5,8 @@ class NotificationService {
   static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
+  static late bool permissionGranted;
+
   // initializes notification settings
   static Future<void> init() async {
     const initializationSettingsAndroid =
@@ -20,6 +22,8 @@ class NotificationService {
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
     );
+
+    permissionGranted = await requestNotificationPermission();
   }
 
   // For handling notification permissions
@@ -33,10 +37,13 @@ class NotificationService {
 
   // For showing notification
   static Future<void> showNotification() async {
-    final permissionGranted = await requestNotificationPermission();
+    // final permissionGranted = await requestNotificationPermission();
 
     if (!permissionGranted) {
-      return;
+      final retryPermission = await requestNotificationPermission();
+      if (!retryPermission) {
+        return;
+      }
     }
 
     const androidPlatformChannelSpecifics = AndroidNotificationDetails(
