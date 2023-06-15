@@ -9,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bus_routes/service/api_service.dart';
 import 'package:bus_routes/utils/utils.dart';
 
-// made global variable to use in workmanager and by this screen the busRoutes list is available
+// made global variable to use in workmanager and by this screen, the busRoutes list is available
 List<BusRoute> sortedRoutes = [];
 
 // method executed by workmanager
