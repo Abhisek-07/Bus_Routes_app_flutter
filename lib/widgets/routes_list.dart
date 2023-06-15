@@ -4,8 +4,26 @@ import 'package:bus_routes/models/bus_routes.dart';
 import 'package:bus_routes/utils/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
+import 'package:workmanager/workmanager.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:bus_routes/service/api_service.dart';
 import 'package:bus_routes/utils/utils.dart';
+
+// made global variable to use in workmanager and by this screen the busRoutes list is available
+List<BusRoute> sortedRoutes = [];
+
+// method executed by workmanager
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    if (task == "sortRoutesTask") {
+      final container = ProviderContainer();
+      var routesList = await container.read(routesProvider.future);
+      sortedRoutes = sortRoutesByTime(routesList);
+    }
+
+    return Future.value(true);
+  });
+}
 
 final timeFormat = DateFormat('HH:mm');
 
@@ -20,7 +38,7 @@ class RoutesList extends StatefulWidget {
 
 class _RoutesListState extends State<RoutesList> {
   Timer? timer;
-  List<BusRoute> sortedRoutes = [];
+  // List<BusRoute> sortedRoutes = [];
 
   // timer is initialised inside initstate and first call to updateData to sort the routes
   @override
@@ -28,6 +46,20 @@ class _RoutesListState extends State<RoutesList> {
     super.initState();
     updateData();
     startTimer();
+    configureWorkManager();
+  }
+
+  // for configuring the work manager
+  void configureWorkManager() {
+    Workmanager().initialize(
+      callbackDispatcher,
+      isInDebugMode: true,
+    );
+    Workmanager().registerPeriodicTask(
+      "sortRoutesTask",
+      "sortRoutesTask",
+      frequency: const Duration(minutes: 1),
+    );
   }
 
   // dispose method
