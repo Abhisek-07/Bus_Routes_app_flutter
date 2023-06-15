@@ -44,6 +44,7 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   workmanager: ^0.5.1
   flutter_riverpod: ^2.3.6
+  shared_preferences: ^2.1.2
 
 flutter_launcher_icons:
   image_path: "assets/images/bus.png"

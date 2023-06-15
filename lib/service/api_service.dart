@@ -36,14 +36,16 @@ class ApiService {
 
         List<Trip> trips = busRouteTimings.map(
           (trip) {
-            String tripStartTime = trip['tripStartTime'];
-            int totalSeats = trip['totalSeats'];
-            int available = trip['avaiable'];
+            // String tripStartTime = trip['tripStartTime'];
+            // int totalSeats = trip['totalSeats'];
+            // int available = trip['avaiable'];
 
-            return Trip(
-                tripStartTime: tripStartTime,
-                totalSeats: totalSeats,
-                available: available);
+            // return Trip(
+            //     tripStartTime: tripStartTime,
+            //     totalSeats: totalSeats,
+            //     available: available);
+
+            return Trip.fromJson(trip);
           },
         ).toList();
 

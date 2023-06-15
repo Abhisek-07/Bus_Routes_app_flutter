@@ -5,9 +5,10 @@ import 'package:bus_routes/utils/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:workmanager/workmanager.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bus_routes/service/api_service.dart';
+// import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import 'package:bus_routes/service/api_service.dart';
 import 'package:bus_routes/utils/utils.dart';
+import 'package:bus_routes/utils/shared_preferences_helper.dart';
 
 // made global variable to use in workmanager and by this screen, the busRoutes list is available
 List<BusRoute> sortedRoutes = [];
@@ -16,9 +17,14 @@ List<BusRoute> sortedRoutes = [];
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     if (task == "sortRoutesTask") {
-      final container = ProviderContainer();
-      var routesList = await container.read(routesProvider.future);
-      sortedRoutes = sortRoutesByTime(routesList);
+      // final container = ProviderContainer();
+      // var routesList = await container.read(routesProvider.future);
+
+      sortedRoutes =
+          await SharedPreferencesHelper.getSortedRoutesFromSharedPreferences();
+      sortedRoutes = sortRoutesByTime(sortedRoutes);
+      await SharedPreferencesHelper.saveSortedRoutesToSharedPreferences(
+          sortedRoutes);
     }
 
     return Future.value(true);
@@ -70,10 +76,15 @@ class _RoutesListState extends State<RoutesList> {
   }
 
   // updates sorted list of bus routes
-  void updateData() {
+  void updateData() async {
     setState(() {
       sortedRoutes = sortRoutesByTime(widget.busRoutes);
     });
+
+    // saving sorted routes to shared preferences
+    await SharedPreferencesHelper.saveSortedRoutesToSharedPreferences(
+        sortedRoutes);
+
     // logic for showing notifications when 5 minutes till next bus
     if (sortedRoutes[0].shortestTripStartTime != null) {
       final remainingTime =

@@ -13,7 +13,15 @@ class Trip {
     return Trip(
       tripStartTime: json['tripStartTime'],
       totalSeats: json['totalSeats'],
-      available: json['available'],
+      available: json['avaiable'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'tripStartTime': tripStartTime,
+      'totalSeats': totalSeats,
+      'avaiable': available,
+    };
   }
 }
