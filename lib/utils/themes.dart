@@ -11,27 +11,33 @@ final kDarkColorScheme = ColorScheme.fromSeed(
 );
 
 final lightTheme = ThemeData().copyWith(
+  dialogBackgroundColor: kColorScheme.background,
   useMaterial3: true,
   colorScheme: kColorScheme,
   primaryColor: Colors.black,
   scaffoldBackgroundColor: Colors.white,
   appBarTheme: AppBarTheme(backgroundColor: kColorScheme.primaryContainer),
   textTheme: const TextTheme(
-    titleLarge: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold),
-    bodyLarge: TextStyle(color: Colors.black),
-    bodyMedium: TextStyle(color: Colors.black),
-  ),
+      titleLarge: TextStyle(color: Colors.black54, fontWeight: FontWeight.bold),
+      titleMedium:
+          TextStyle(color: Colors.black54, fontWeight: FontWeight.bold),
+      bodyLarge: TextStyle(color: Colors.black),
+      bodyMedium: TextStyle(color: Colors.black),
+      bodySmall: TextStyle(color: Colors.black87)),
 );
 
 final darkTheme = ThemeData().copyWith(
+  dialogBackgroundColor: kDarkColorScheme.background,
   useMaterial3: true,
   colorScheme: kDarkColorScheme,
   primaryColor: Colors.white,
   scaffoldBackgroundColor: Colors.black,
   appBarTheme: AppBarTheme(backgroundColor: kDarkColorScheme.primaryContainer),
   textTheme: const TextTheme(
-    titleLarge: TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
-    bodyLarge: TextStyle(color: Colors.white),
-    bodyMedium: TextStyle(color: Colors.white),
-  ),
+      titleLarge: TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
+      titleMedium:
+          TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
+      bodyLarge: TextStyle(color: Colors.white),
+      bodyMedium: TextStyle(color: Colors.white),
+      bodySmall: TextStyle(color: Colors.white70)),
 );

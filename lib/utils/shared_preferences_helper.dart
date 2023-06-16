@@ -26,23 +26,12 @@ class SharedPreferencesHelper {
     if (jsonStr != null) {
       // Convert the JSON string to a list of BusRoute objects
       List<dynamic> jsonList = json.decode(jsonStr);
+
       List<BusRoute> sortedRoutes = jsonList.map((json) {
-        List<dynamic> tripListJson = json['trips'];
-
-        List<Trip> trips = tripListJson.map((tripJson) {
-          return Trip.fromJson(tripJson);
-        }).toList();
-
         // Create a BusRoute object from each JSON object in the list
-        return BusRoute(
-          id: json['id'],
-          name: json['name'],
-          source: json['source'],
-          destination: json['destination'],
-          tripDuration: json['tripDuration'],
-          icon: json['icon'],
-          trips: trips, // Populate the trips list if needed
-        );
+
+        return BusRoute.fromJson(
+            json, json['tripStartTime'], json['totalSeats'], json['available']);
       }).toList();
 
       return sortedRoutes;

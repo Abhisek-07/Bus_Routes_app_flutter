@@ -19,47 +19,61 @@ class ApiService {
 
     final Map<String, dynamic> busData = json.decode(data);
 
+    List<BusRoute> busRoutes = [];
+
     // list of bus routes
-    List<dynamic> busRoutesInfo = busData['routeInfo'];
+    List<dynamic> routesInfo = busData['routeInfo'];
+    final Map<String, dynamic> routeTimings = busData['routeTimings'];
 
-    List<BusRoute> busRoutes = busRoutesInfo.map(
-      (busInfo) {
-        String id = busInfo['id'];
-        String name = busInfo['name'];
-        String source = busInfo['source'];
-        String destination = busInfo['destination'];
-        String tripDuration = busInfo['tripDuration'];
-        String icon = busInfo['icon'];
+    routesInfo.forEach((route) {
+      final String routeId = route['id'];
+      final List<dynamic> trips = routeTimings[routeId]!;
 
-        // list of bus route trips for each bus route
-        List<dynamic> busRouteTimings = busData['routeTimings'][id];
+      trips.forEach((trip) {
+        if (trip != null && trip is Map<String, dynamic> && trip.isNotEmpty) {
+          final String? tripStartTime = trip['tripStartTime'];
+          final int? totalSeats = trip['totalSeats'];
+          final int? available = trip['avaiable'];
 
-        List<Trip> trips = busRouteTimings.map(
-          (trip) {
-            // String tripStartTime = trip['tripStartTime'];
-            // int totalSeats = trip['totalSeats'];
-            // int available = trip['avaiable'];
+          final BusRoute busRoute =
+              BusRoute.fromJson(route, tripStartTime, totalSeats, available);
 
-            // return Trip(
-            //     tripStartTime: tripStartTime,
-            //     totalSeats: totalSeats,
-            //     available: available);
+          busRoutes.add(busRoute);
+        }
+      });
+    });
 
-            return Trip.fromJson(trip);
-          },
-        ).toList();
+    // List<BusRoute> busRoutes = busRoutesInfo.map(
+    //   (busInfo) {
+    //     String id = busInfo['id'];
+    //     String name = busInfo['name'];
+    //     String source = busInfo['source'];
+    //     String destination = busInfo['destination'];
+    //     String tripDuration = busInfo['tripDuration'];
+    //     String icon = busInfo['icon'];
 
-        return BusRoute(
-          id: id,
-          name: name,
-          source: source,
-          destination: destination,
-          tripDuration: tripDuration,
-          icon: icon,
-          trips: trips,
-        );
-      },
-    ).toList();
+    //     // list of bus route trips for each bus route
+    //     List<dynamic> busRouteTimings = busData['routeTimings'][id];
+
+    //     List<Trip> trips = busRouteTimings.map(
+    //       (trip) {
+    //         return Trip.fromJson(trip);
+    //       },
+    //     ).toList();
+
+    //     return BusRoute(
+    //       id: id,
+    //       name: name,
+    //       source: source,
+    //       destination: destination,
+    //       tripDuration: tripDuration,
+    //       icon: icon,
+    //       // trips: trips,
+    //     );
+    //   },
+    // ).toList();
+
+    print(jsonEncode(busRoutes[0].toJson()));
 
     return busRoutes;
   }

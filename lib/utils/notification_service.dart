@@ -2,13 +2,15 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class NotificationService {
-  static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  static late bool permissionGranted;
+  late bool permissionGranted;
 
   // initializes notification settings
-  static Future<void> init() async {
+  Future<void> init() async {
+    permissionGranted = await requestNotificationPermission();
+
     const initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
@@ -22,12 +24,10 @@ class NotificationService {
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
     );
-
-    permissionGranted = await requestNotificationPermission();
   }
 
   // For handling notification permissions
-  static Future<bool> requestNotificationPermission() async {
+  Future<bool> requestNotificationPermission() async {
     PermissionStatus status = await Permission.notification.status;
     if (!status.isGranted) {
       status = await Permission.notification.request();
@@ -36,7 +36,7 @@ class NotificationService {
   }
 
   // For showing notification
-  static Future<void> showNotification() async {
+  Future<void> showNotification(int remainingTime) async {
     // final permissionGranted = await requestNotificationPermission();
 
     if (!permissionGranted) {
@@ -65,7 +65,7 @@ class NotificationService {
     await flutterLocalNotificationsPlugin.show(
       0,
       'Bus Reminder',
-      'Your bus will arrive in 5 minutes!',
+      'Your bus will arrive in $remainingTime minutes!',
       platformChannelSpecifics,
     );
   }
