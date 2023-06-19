@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-// import 'package:bus_routes/models/trip.dart';
-
 import 'package:bus_routes/models/bus_routes.dart';
 
 import 'package:http/http.dart' as http;
@@ -42,36 +40,6 @@ class ApiService {
         }
       });
     });
-
-    // List<BusRoute> busRoutes = busRoutesInfo.map(
-    //   (busInfo) {
-    //     String id = busInfo['id'];
-    //     String name = busInfo['name'];
-    //     String source = busInfo['source'];
-    //     String destination = busInfo['destination'];
-    //     String tripDuration = busInfo['tripDuration'];
-    //     String icon = busInfo['icon'];
-
-    //     // list of bus route trips for each bus route
-    //     List<dynamic> busRouteTimings = busData['routeTimings'][id];
-
-    //     List<Trip> trips = busRouteTimings.map(
-    //       (trip) {
-    //         return Trip.fromJson(trip);
-    //       },
-    //     ).toList();
-
-    //     return BusRoute(
-    //       id: id,
-    //       name: name,
-    //       source: source,
-    //       destination: destination,
-    //       tripDuration: tripDuration,
-    //       icon: icon,
-    //       // trips: trips,
-    //     );
-    //   },
-    // ).toList();
 
     print(jsonEncode(busRoutes[0].toJson()));
 

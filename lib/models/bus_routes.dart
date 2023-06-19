@@ -52,8 +52,6 @@ class BusRoute {
       'tripStartTime': tripStartTime,
       'totalSeats': totalSeats,
       'available': available,
-      // 'trips': trips.map((trip) => trip.toJson()).toList(),
-      // 'shortestTripStartTime': shortestTripStartTime,
     };
   }
 }

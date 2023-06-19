@@ -25,3 +25,5 @@ class Trip {
     };
   }
 }
+
+// THIS MODEL IS NOT USED !...

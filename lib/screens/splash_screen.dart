@@ -30,7 +30,7 @@ class SplashScreen extends StatelessWidget {
         ],
       ),
       backgroundColor: Colors.white,
-      nextScreen: RoutesScreen(),
+      nextScreen: const RoutesScreen(),
       splashIconSize: 150,
       splashTransition: SplashTransition.slideTransition,
       duration: 1000,

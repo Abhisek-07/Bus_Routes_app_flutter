@@ -5,23 +5,20 @@ import 'package:bus_routes/utils/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:workmanager/workmanager.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:bus_routes/service/api_service.dart';
+
 import 'package:bus_routes/utils/utils.dart';
 import 'package:bus_routes/utils/shared_preferences_helper.dart';
 
-// made global variable to use in workmanager and by this screen, the busRoutes list is available
+// made sorted routes global variable to use in workmanager and by this screen, the busRoutes list is available, filter options to filter routes
 List<String> filterOptions = ['All', 'k-11', 'k-12', 'k-14', 'R-1', 'G-12'];
 List<BusRoute> sortedRoutes = [];
 Workmanager workmanager = Workmanager();
+final timeFormat = DateFormat('HH:mm');
 
-// method executed by workmanager
+// method executed by workmanager to sort and store the routes and show a notification for next bus timing...
 void callbackDispatcher() {
   workmanager.executeTask((task, inputData) async {
     if (task == "sortRoutesTask") {
-      // final container = ProviderContainer();
-      // var routesList = await container.read(routesProvider.future);
-
       sortedRoutes =
           await SharedPreferencesHelper.getSortedRoutesFromSharedPreferences();
 
@@ -43,8 +40,6 @@ void callbackDispatcher() {
     return Future.value(true);
   });
 }
-
-final timeFormat = DateFormat('HH:mm');
 
 class RoutesList extends StatefulWidget {
   const RoutesList({super.key, required this.busRoutes});
@@ -68,7 +63,7 @@ class _RoutesListState extends State<RoutesList> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
 
-  // timer is initialised inside initstate and first call to updateData to sort the routes
+  // timer is initialised inside initstate and first call to updateData to sort the routes, also work manager is configured and notifications are initialized
   @override
   void initState() {
     super.initState();
@@ -178,9 +173,6 @@ class _RoutesListState extends State<RoutesList> {
       );
     }
 
-    // (IRRELEVANT)count to check if no more trips are remaining in any route, then to return a center widget with no more trips
-
-    // int routesWithNoUpcomingTrips = 0;
     return Column(
       children: [
         DropdownButton(
@@ -208,20 +200,7 @@ class _RoutesListState extends State<RoutesList> {
                   final route = filteredRoutes[index];
 
                   if (route.tripStartTime == null) {
-                    // routesWithNoUpcomingTrips++;
-                    // if (routesWithNoUpcomingTrips == sortedRoutes.length) {
-                    //   // returns this if no trips on any route are left
-                    //   return const Center(
-                    //     child: Text(
-                    //       'No more trips left',
-                    //       style: TextStyle(
-                    //         fontSize: 20,
-                    //       ),
-                    //     ),
-                    //   );
-                    // }
-
-                    // returns this if there are trips but no trips for this route
+                    // returns this if route's tripstarttime is null...
                     return Container();
                   }
 

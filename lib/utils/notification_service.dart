@@ -37,8 +37,6 @@ class NotificationService {
 
   // For showing notification
   Future<void> showNotification(String routeName, int remainingTime) async {
-    // final permissionGranted = await requestNotificationPermission();
-
     if (!permissionGranted) {
       final retryPermission = await requestNotificationPermission();
       if (!retryPermission) {
