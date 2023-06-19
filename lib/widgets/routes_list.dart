@@ -154,16 +154,16 @@ class _RoutesListState extends State<RoutesList> {
       );
     }
 
-    if (sortedRoutes.isEmpty) {
-      return const Center(
-        child: Text(
-          'No more trips left',
-          style: TextStyle(
-            fontSize: 20,
-          ),
-        ),
-      );
-    }
+    // if (sortedRoutes.isEmpty) {
+    //   return const Center(
+    //     child: Text(
+    //       'No more trips left',
+    //       style: TextStyle(
+    //         fontSize: 20,
+    //       ),
+    //     ),
+    //   );
+    // }
 
     List<BusRoute> filteredRoutes;
 
@@ -191,37 +191,49 @@ class _RoutesListState extends State<RoutesList> {
             });
           },
         ),
-        Expanded(
-          child: RefreshIndicator(
-            key: _refreshIndicatorKey,
-            onRefresh: _refreshList,
-            child: ListView.builder(
-              itemCount: filteredRoutes.length,
-              itemBuilder: (context, index) {
-                final route = filteredRoutes[index];
+        if (filteredRoutes.isEmpty)
+          const Expanded(
+            child: Center(
+              child: Text(
+                'No more trips left',
+                style: TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          )
+        else
+          Expanded(
+            child: RefreshIndicator(
+              key: _refreshIndicatorKey,
+              onRefresh: _refreshList,
+              child: ListView.builder(
+                itemCount: filteredRoutes.length,
+                itemBuilder: (context, index) {
+                  final route = filteredRoutes[index];
 
-                // if (route.tripStartTime == null) {
-                //   // returns this if route's tripstarttime is null...
-                //   return Container();
-                // }
+                  // if (route.tripStartTime == null) {
+                  //   // returns this if route's tripstarttime is null...
+                  //   return Container();
+                  // }
 
-                final remainingTime =
-                    getRemainingTimeInMinutes(route.tripStartTime!);
-                final tripEndTime =
-                    getTripEndTime(route.tripStartTime!, route.tripDuration);
+                  final remainingTime =
+                      getRemainingTimeInMinutes(route.tripStartTime!);
+                  final tripEndTime =
+                      getTripEndTime(route.tripStartTime!, route.tripDuration);
 
-                // if (remainingTime <= 0) {
-                //   return Container();
-                // }
+                  // if (remainingTime <= 0) {
+                  //   return Container();
+                  // }
 
-                return RouteCard(
-                    route: route,
-                    remainingTime: remainingTime,
-                    tripEndTime: tripEndTime);
-              },
+                  return RouteCard(
+                      route: route,
+                      remainingTime: remainingTime,
+                      tripEndTime: tripEndTime);
+                },
+              ),
             ),
           ),
-        ),
       ],
     );
   }

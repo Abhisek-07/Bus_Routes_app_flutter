@@ -9,7 +9,7 @@ class RouteDetailsAlert extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       title: Text(
         'Bus Details',
         style: TextStyle(color: Theme.of(context).colorScheme.primary),
