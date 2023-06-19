@@ -1,5 +1,5 @@
 import 'package:bus_routes/screens/splash_screen.dart';
-import 'package:bus_routes/utils/notification_service.dart';
+// import 'package:bus_routes/utils/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:bus_routes/utils/themes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:bus_routes/models/trip.dart';
+// import 'package:bus_routes/models/trip.dart';
 
 import 'package:bus_routes/models/bus_routes.dart';
 

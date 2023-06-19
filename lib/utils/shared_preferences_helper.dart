@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:bus_routes/models/bus_routes.dart';
-import 'package:bus_routes/models/trip.dart';
+// import 'package:bus_routes/models/trip.dart';
 
 class SharedPreferencesHelper {
   static Future<void> saveSortedRoutesToSharedPreferences(

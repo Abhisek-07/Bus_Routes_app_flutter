@@ -26,7 +26,7 @@ void callbackDispatcher() {
 
       sortedRoutes = sortRoutesByTime(sortedRoutes);
 
-      if (sortedRoutes[0].tripStartTime != null) {
+      if (sortedRoutes.isNotEmpty && sortedRoutes[0].tripStartTime != null) {
         final remainingTime =
             getRemainingTimeInMinutes(sortedRoutes[0].tripStartTime!);
         NotificationService notificationService = NotificationService();
@@ -87,6 +87,7 @@ class _RoutesListState extends State<RoutesList> {
       "sortRoutesTask",
       "sortRoutesTask",
       frequency: const Duration(minutes: 1),
+      initialDelay: const Duration(seconds: 2),
     );
   }
 
@@ -108,7 +109,7 @@ class _RoutesListState extends State<RoutesList> {
         sortedRoutes);
 
     // logic for showing notifications when 5 minutes till next bus
-    if (sortedRoutes[0].tripStartTime != null) {
+    if (sortedRoutes.isNotEmpty && sortedRoutes[0].tripStartTime != null) {
       final remainingTime =
           getRemainingTimeInMinutes(sortedRoutes[0].tripStartTime!);
 
@@ -241,6 +242,14 @@ class _RoutesListState extends State<RoutesList> {
                               Text(
                                 'Trip Duration: ${route.tripDuration}',
                                 style: const TextStyle(fontSize: 16),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                'Route: ${route.name}',
+                                style: const TextStyle(fontSize: 16),
+                                textAlign: TextAlign.center,
                               ),
                             ],
                           ),

@@ -1,5 +1,5 @@
 import 'package:bus_routes/models/bus_routes.dart';
-import 'package:bus_routes/models/trip.dart';
+// import 'package:bus_routes/models/trip.dart';
 import 'package:intl/intl.dart';
 
 final timeFormat = DateFormat('HH:mm');
@@ -70,6 +70,8 @@ List<BusRoute> sortRoutesByTime(List<BusRoute> busRoutes) {
   filteredRoutes.forEach((element) {
     print(element.tripStartTime);
   });
+
+  print(filteredRoutes.length);
 
   return filteredRoutes;
 
