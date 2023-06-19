@@ -165,7 +165,7 @@ class _RoutesListState extends State<RoutesList> {
     //   );
     // }
 
-    List<BusRoute> filteredRoutes;
+    List<BusRoute> filteredRoutes = [];
 
     if (selectedFilter == 'All') {
       filteredRoutes = sortedRoutes;
