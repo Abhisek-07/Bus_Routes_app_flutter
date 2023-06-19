@@ -36,7 +36,7 @@ class NotificationService {
   }
 
   // For showing notification
-  Future<void> showNotification(int remainingTime) async {
+  Future<void> showNotification(String routeName, int remainingTime) async {
     // final permissionGranted = await requestNotificationPermission();
 
     if (!permissionGranted) {
@@ -65,7 +65,7 @@ class NotificationService {
     await flutterLocalNotificationsPlugin.show(
       0,
       'Bus Reminder',
-      'Your bus will arrive in $remainingTime minutes!',
+      'Next bus on route $routeName will arrive in $remainingTime minutes!',
       platformChannelSpecifics,
     );
   }

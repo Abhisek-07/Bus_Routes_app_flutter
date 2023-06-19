@@ -11,6 +11,7 @@ import 'package:bus_routes/utils/utils.dart';
 import 'package:bus_routes/utils/shared_preferences_helper.dart';
 
 // made global variable to use in workmanager and by this screen, the busRoutes list is available
+List<String> filterOptions = ['All', 'k-11', 'k-12', 'k-14', 'R-1', 'G-12'];
 List<BusRoute> sortedRoutes = [];
 Workmanager workmanager = Workmanager();
 
@@ -31,7 +32,8 @@ void callbackDispatcher() {
             getRemainingTimeInMinutes(sortedRoutes[0].tripStartTime!);
         NotificationService notificationService = NotificationService();
         await notificationService.init();
-        notificationService.showNotification(remainingTime);
+        notificationService.showNotification(
+            sortedRoutes[0].name, remainingTime);
       }
 
       await SharedPreferencesHelper.saveSortedRoutesToSharedPreferences(
@@ -55,7 +57,10 @@ class RoutesList extends StatefulWidget {
 
 class _RoutesListState extends State<RoutesList> {
   // List<BusRoute> sortedRoutes = [];
+  String selectedFilter = 'All';
+
   Timer? timer;
+
   NotificationService notificationService = NotificationService();
 
   bool isLoading = false;
@@ -114,7 +119,8 @@ class _RoutesListState extends State<RoutesList> {
           getRemainingTimeInMinutes(sortedRoutes[0].tripStartTime!);
 
       if (remainingTime == 5) {
-        notificationService.showNotification(remainingTime);
+        notificationService.showNotification(
+            sortedRoutes[0].name, remainingTime);
       }
     }
   }
@@ -140,6 +146,15 @@ class _RoutesListState extends State<RoutesList> {
 
   @override
   Widget build(BuildContext context) {
+    List<BusRoute> filteredRoutes;
+
+    if (selectedFilter == 'All') {
+      filteredRoutes = sortedRoutes;
+    } else {
+      filteredRoutes =
+          sortedRoutes.where((route) => route.name == selectedFilter).toList();
+    }
+
     if (isLoading) {
       return Center(
         child: TweenAnimationBuilder<double>(
@@ -166,224 +181,259 @@ class _RoutesListState extends State<RoutesList> {
     // (IRRELEVANT)count to check if no more trips are remaining in any route, then to return a center widget with no more trips
 
     // int routesWithNoUpcomingTrips = 0;
-    return RefreshIndicator(
-      key: _refreshIndicatorKey,
-      onRefresh: _refreshList,
-      child: ListView.builder(
-          itemCount: sortedRoutes.length,
-          itemBuilder: (context, index) {
-            final route = sortedRoutes[index];
+    return Column(
+      children: [
+        DropdownButton(
+          value: selectedFilter,
+          items: filterOptions.map((option) {
+            return DropdownMenuItem(
+              value: option,
+              child: Text(option),
+            );
+          }).toList(),
+          onChanged: (value) {
+            setState(() {
+              selectedFilter = value!;
+              updateData();
+            });
+          },
+        ),
+        Expanded(
+          child: RefreshIndicator(
+            key: _refreshIndicatorKey,
+            onRefresh: _refreshList,
+            child: ListView.builder(
+                itemCount: filteredRoutes.length,
+                itemBuilder: (context, index) {
+                  final route = filteredRoutes[index];
 
-            if (route.tripStartTime == null) {
-              // routesWithNoUpcomingTrips++;
-              // if (routesWithNoUpcomingTrips == sortedRoutes.length) {
-              //   // returns this if no trips on any route are left
-              //   return const Center(
-              //     child: Text(
-              //       'No more trips left',
-              //       style: TextStyle(
-              //         fontSize: 20,
-              //       ),
-              //     ),
-              //   );
-              // }
+                  if (route.tripStartTime == null) {
+                    // routesWithNoUpcomingTrips++;
+                    // if (routesWithNoUpcomingTrips == sortedRoutes.length) {
+                    //   // returns this if no trips on any route are left
+                    //   return const Center(
+                    //     child: Text(
+                    //       'No more trips left',
+                    //       style: TextStyle(
+                    //         fontSize: 20,
+                    //       ),
+                    //     ),
+                    //   );
+                    // }
 
-              // returns this if there are trips but no trips for this route
-              return Container();
-            }
+                    // returns this if there are trips but no trips for this route
+                    return Container();
+                  }
 
-            final remainingTime =
-                getRemainingTimeInMinutes(route.tripStartTime!);
-            final tripEndTime =
-                getTripEndTime(route.tripStartTime!, route.tripDuration);
+                  final remainingTime =
+                      getRemainingTimeInMinutes(route.tripStartTime!);
+                  final tripEndTime =
+                      getTripEndTime(route.tripStartTime!, route.tripDuration);
 
-            if (remainingTime <= 0) {
-              return Container();
-            }
+                  if (remainingTime <= 0) {
+                    return Container();
+                  }
 
-            // widget for route card
-            return GestureDetector(
-              onTap: () {
-                showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.inversePrimary,
-                          title: Text(
-                            'Bus Details',
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary),
-                          ),
-                          content: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                'Source: ${route.source}',
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                'Destination: ${route.destination}',
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                'Departure Time: ${route.tripStartTime}',
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                'Trip Duration: ${route.tripDuration}',
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                'Route: ${route.name}',
-                                style: const TextStyle(fontSize: 16),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text('Close'),
-                            ),
-                          ],
-                        ));
-              },
-              child: Center(
-                child: Card(
-                  margin: const EdgeInsets.only(bottom: 30),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
-                    child: SizedBox(
-                      width: 350,
-                      height: 200,
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
+                  // widget for route card
+                  return GestureDetector(
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary,
+                                title: Text(
+                                  'Bus Details',
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary),
+                                ),
+                                content: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    ListTile(
-                                      minLeadingWidth: 10,
-                                      leading: const IconTheme(
-                                        data: IconThemeData(
-                                          color: Colors.blue,
-                                        ),
-                                        child: Icon(Icons.location_on),
-                                      ),
-                                      title: Text(
-                                        route.source,
-                                        style: const TextStyle(fontSize: 14),
-                                      ),
-                                      subtitle: Text(route.tripStartTime!),
+                                    Text(
+                                      'Source: ${route.source}',
+                                      style: const TextStyle(fontSize: 16),
                                     ),
                                     const SizedBox(
-                                      height: 12,
+                                      height: 10,
                                     ),
-                                    ListTile(
-                                      minLeadingWidth: 10,
-                                      leading: const IconTheme(
-                                        data: IconThemeData(
-                                          color: Colors.red,
-                                        ),
-                                        child: Icon(Icons.location_on),
-                                      ),
-                                      title: Text(
-                                        route.destination,
-                                        style: const TextStyle(fontSize: 14),
-                                      ),
-                                      subtitle: Text(tripEndTime),
-                                    )
+                                    Text(
+                                      'Destination: ${route.destination}',
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      'Departure Time: ${route.tripStartTime}',
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      'Trip Duration: ${route.tripDuration}',
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      'Route: ${route.name}',
+                                      style: const TextStyle(fontSize: 16),
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ],
                                 ),
-                              ),
-                              const VerticalDivider(),
-                              Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('Close'),
+                                  ),
+                                ],
+                              ));
+                    },
+                    child: Center(
+                      child: Card(
+                        margin: const EdgeInsets.only(bottom: 30),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16)),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 4),
+                          child: SizedBox(
+                            width: 350,
+                            height: 200,
+                            child: Column(
+                              children: [
+                                Row(
                                   children: [
-                                    const Text(
-                                      'Departure in:',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 8,
-                                    ),
-                                    Text.rich(
-                                      TextSpan(
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          TextSpan(
-                                            text: '$remainingTime',
-                                            style: const TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold),
+                                          ListTile(
+                                            minLeadingWidth: 10,
+                                            leading: const IconTheme(
+                                              data: IconThemeData(
+                                                color: Colors.blue,
+                                              ),
+                                              child: Icon(Icons.location_on),
+                                            ),
+                                            title: Text(
+                                              route.source,
+                                              style:
+                                                  const TextStyle(fontSize: 14),
+                                            ),
+                                            subtitle:
+                                                Text(route.tripStartTime!),
                                           ),
-                                          const TextSpan(
-                                            text: 'mins',
-                                            style: TextStyle(fontSize: 12),
+                                          const SizedBox(
+                                            height: 12,
+                                          ),
+                                          ListTile(
+                                            minLeadingWidth: 10,
+                                            leading: const IconTheme(
+                                              data: IconThemeData(
+                                                color: Colors.red,
+                                              ),
+                                              child: Icon(Icons.location_on),
+                                            ),
+                                            title: Text(
+                                              route.destination,
+                                              style:
+                                                  const TextStyle(fontSize: 14),
+                                            ),
+                                            subtitle: Text(tripEndTime),
                                           )
                                         ],
                                       ),
                                     ),
-                                    const SizedBox(
-                                      height: 8,
+                                    const VerticalDivider(),
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Text(
+                                            'Departure in:',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 8,
+                                          ),
+                                          Text.rich(
+                                            TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: '$remainingTime',
+                                                  style: const TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                const TextSpan(
+                                                  text: 'mins',
+                                                  style:
+                                                      TextStyle(fontSize: 12),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 8,
+                                          ),
+                                          Text(
+                                              'Travel time: ${route.tripDuration}'),
+                                        ],
+                                      ),
                                     ),
-                                    Text('Travel time: ${route.tripDuration}'),
                                   ],
                                 ),
-                              ),
-                            ],
-                          ),
-                          Expanded(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(route.name),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                const Icon(
-                                  Icons.bus_alert,
-                                  color: Colors.lightBlue,
+                                Expanded(
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(route.name),
+                                      const SizedBox(
+                                        width: 20,
+                                      ),
+                                      const Icon(
+                                        Icons.bus_alert,
+                                        color: Colors.lightBlue,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              ),
-            );
-          }),
+                  );
+                }),
+          ),
+        ),
+      ],
     );
   }
 }
