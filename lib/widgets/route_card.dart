@@ -1,3 +1,4 @@
+import 'package:bus_routes/widgets/route_details_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:bus_routes/models/bus_routes.dart';
 
@@ -14,66 +15,71 @@ class RouteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (remainingTime <= 0 || route.tripStartTime == null) {
+      return Container();
+    }
+
     // widget for route card
     return GestureDetector(
       onTap: () {
         showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-                  backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-                  title: Text(
-                    'Bus Details',
-                    style:
-                        TextStyle(color: Theme.of(context).colorScheme.primary),
-                  ),
-                  content: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Source: ${route.source}',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'Destination: ${route.destination}',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'Departure Time: ${route.tripStartTime}',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'Trip Duration: ${route.tripDuration}',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'Route: ${route.name}',
-                        style: const TextStyle(fontSize: 16),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Close'),
-                    ),
-                  ],
-                ));
+          context: context,
+          builder: (context) => RouteDetailsAlert(route: route),
+          // AlertDialog(
+          //   backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          //   title: Text(
+          //     'Bus Details',
+          //     style: TextStyle(color: Theme.of(context).colorScheme.primary),
+          //   ),
+          //   content: Column(
+          //     crossAxisAlignment: CrossAxisAlignment.start,
+          //     mainAxisSize: MainAxisSize.min,
+          //     children: [
+          //       Text(
+          //         'Source: ${route.source}',
+          //         style: const TextStyle(fontSize: 16),
+          //       ),
+          //       const SizedBox(
+          //         height: 10,
+          //       ),
+          //       Text(
+          //         'Destination: ${route.destination}',
+          //         style: const TextStyle(fontSize: 16),
+          //       ),
+          //       const SizedBox(
+          //         height: 10,
+          //       ),
+          //       Text(
+          //         'Departure Time: ${route.tripStartTime}',
+          //         style: const TextStyle(fontSize: 16),
+          //       ),
+          //       const SizedBox(
+          //         height: 10,
+          //       ),
+          //       Text(
+          //         'Trip Duration: ${route.tripDuration}',
+          //         style: const TextStyle(fontSize: 16),
+          //       ),
+          //       const SizedBox(
+          //         height: 10,
+          //       ),
+          //       Text(
+          //         'Route: ${route.name}',
+          //         style: const TextStyle(fontSize: 16),
+          //         textAlign: TextAlign.center,
+          //       ),
+          //     ],
+          //   ),
+          //   actions: [
+          //     TextButton(
+          //       onPressed: () {
+          //         Navigator.pop(context);
+          //       },
+          //       child: const Text('Close'),
+          //     ),
+          //   ],
+          // ),
+        );
       },
       child: Center(
         child: Card(
