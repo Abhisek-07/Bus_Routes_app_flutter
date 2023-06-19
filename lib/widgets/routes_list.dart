@@ -177,6 +177,7 @@ class _RoutesListState extends State<RoutesList> {
     return Column(
       children: [
         DropdownButton(
+          dropdownColor: Theme.of(context).colorScheme.primaryContainer,
           value: selectedFilter,
           items: filterOptions.map((option) {
             return DropdownMenuItem(
