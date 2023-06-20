@@ -154,17 +154,6 @@ class _RoutesListState extends State<RoutesList> {
       );
     }
 
-    // if (sortedRoutes.isEmpty) {
-    //   return const Center(
-    //     child: Text(
-    //       'No more trips left',
-    //       style: TextStyle(
-    //         fontSize: 20,
-    //       ),
-    //     ),
-    //   );
-    // }
-
     List<BusRoute> filteredRoutes = [];
 
     if (selectedFilter == 'All') {
@@ -213,19 +202,10 @@ class _RoutesListState extends State<RoutesList> {
                 itemBuilder: (context, index) {
                   final route = filteredRoutes[index];
 
-                  // if (route.tripStartTime == null) {
-                  //   // returns this if route's tripstarttime is null...
-                  //   return Container();
-                  // }
-
                   final remainingTime =
                       getRemainingTimeInMinutes(route.tripStartTime!);
                   final tripEndTime =
                       getTripEndTime(route.tripStartTime!, route.tripDuration);
-
-                  // if (remainingTime <= 0) {
-                  //   return Container();
-                  // }
 
                   return RouteCard(
                       route: route,
