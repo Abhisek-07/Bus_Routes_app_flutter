@@ -170,8 +170,13 @@ class _RoutesListState extends State<RoutesList> {
           value: selectedFilter,
           items: filterOptions.map((option) {
             return DropdownMenuItem(
+              alignment: Alignment.center,
               value: option,
-              child: Text(option),
+              child: Text(
+                option,
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary),
+              ),
             );
           }).toList(),
           onChanged: (value) {
